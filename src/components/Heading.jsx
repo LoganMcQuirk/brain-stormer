@@ -1,38 +1,40 @@
 import React, { useState } from 'react'
 import Notes from './Notes.jsx'
 
-function Heading({value, onChange}) {
-const [notes, setNotes] = useState(['', ''])
+function Heading({ heading, onChangeHeading, onChangeNotes, onAddNote }) {
+
 
 
     return (
-        <div>
+        <div className='flex flex-col justify-center items-center'>
         <input 
             className="flex items-center justify-center p-4 border rounded w-40 text-center font-medium" 
             placeholder='Heading'
-            value={value}
-            onChange={onChange}
+            value={heading.headingText}
+            onChange={(e) => onChangeHeading(e.target.value)}
+            
         />
         
-        <Notes 
-            value={notes[0]}
-            onChange={(e) => {
-                const newNotes = [...notes]
-                newNotes[0] = e.target.value
-                setNotes(newNotes)
-            }}
+        {heading.notes.map((noteText, i) => (
+            <Notes
+            key={i} // key is important for React to track the elements
+            value={noteText}
+            onChange={(e) => onChangeNotes(i, e.target.value)}
             />
-            
-
-        <Notes 
-            value={notes[1]}
-            onChange={(e) => {
-                const newNotes = [...notes]
-                newNotes[1] = e.target.value
-                setNotes(newNotes)
-            
-            }}  
-        />
+        ))}
+        
+        
+        <button
+        className="mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm  "
+        onClick={() => {
+            // Create a new notes array by copying existing notes and adding a new empty string
+            //const newNotes = [...heading.notes, '']
+            // newNotes.push('')
+            onAddNote() // we’ll adjust the handler in Project
+        }}
+        >
+        + Add Note
+        </button>
         
         </div>
     )

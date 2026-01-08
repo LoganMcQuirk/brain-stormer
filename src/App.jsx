@@ -13,7 +13,9 @@ function App() {
         <h1 className="text-shadow-md text-shadow-teal-200 text-2xl text-4xl text-white font-bold">Brain Stormer</h1>
       </header>
     {/* Main Content */}
+
       <main className='h-full'>
+        
         <Project />
 
       </main>
