@@ -126,9 +126,9 @@ function Project() {
             </div>
             
             
-                    <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
+                    {/* <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
                     {JSON.stringify({ project }, null, 2)}
-                    </pre>
+                    </pre> */}
         </div>
         
         
