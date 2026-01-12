@@ -17,7 +17,7 @@ function Heading({ heading, onChangeHeading, onChangeNotes, onAddNote }) {
         
         {heading.notes.map((noteText, i) => (
             <Notes
-            key={i} // key is important for React to track the elements
+            key={i}
             value={noteText}
             onChange={(e) => onChangeNotes(i, e.target.value)}
             />
@@ -27,10 +27,7 @@ function Heading({ heading, onChangeHeading, onChangeNotes, onAddNote }) {
         <button
         className="mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm  "
         onClick={() => {
-            // Create a new notes array by copying existing notes and adding a new empty string
-            //const newNotes = [...heading.notes, '']
-            // newNotes.push('')
-            onAddNote() // we’ll adjust the handler in Project
+            onAddNote()
         }}
         >
         + Add Note

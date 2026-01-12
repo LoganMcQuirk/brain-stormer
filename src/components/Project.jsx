@@ -56,76 +56,75 @@ function Project() {
             
 
             <div className="flex flex-row justify-end items-start gap-4 w-full">
-                <Heading 
-                    heading={project.headings[0]}
-                    onChangeHeading={(newText) => {
-                            const newProject = {...project}
-                            newProject.headings[0].headingText = newText
-                            setProject(newProject)    
-                        }
+
+                <button
+                    className="mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm  "
+                    onClick={() => {
                         
-                    }  
+                        setProject({...project, 
+                            headings: [{headingText: '', notes: ['']}, ...project.headings ]
+                        })
+                    }}
+                >
+                + Add
+                </button>
+
+                {project.headings.map((heading, headingIndex) => (
+                    <Heading
+                        key={headingIndex}
+                        heading={heading}
+                        onChangeHeading={(newText) => {
+                            const newProject = {...project,
+                                headings: project.headings.map((hd, i) => {
+                                        return i === headingIndex ? {...hd, headingText: newText} :  hd    
+                                    }
+                                )
+                            }
+                            setProject(newProject)
+                            
+                        }}
+                        onChangeNotes={(noteIndex, newText) => {
+                            const newProject = {...project, 
+                                headings: project.headings.map((hd, i) => {
+                                    return i === headingIndex
+                                        ? {...hd, 
+                                            notes: hd.notes.map((nt, ntIdx) => {
+                                                return ntIdx === noteIndex ? newText : nt
+                                            })} 
+                                        : hd 
+                                })
+                            }
+                            setProject(newProject)
+                        }}
+                        onAddNote={() => {
+                            const newProject = {...project,
+                                headings: project.headings.map((hd, i) => {
+                                    return i === headingIndex ? {...hd, notes: [...hd.notes, '']} : hd
+                                })
+                            }
+                            
+                            setProject(newProject)
+                        }}
                     
-                    onChangeNotes={(noteIndex, newText) => {
-                                const newProject = {...project}
-                                newProject.headings[0].notes[noteIndex] = newText
-                                setProject(newProject)
-                            }
-                        }
-                    onAddNote={() => {
-                            const newProject = {...project}
-                            newProject.headings[0].notes = [...newProject.headings[0].notes, '']
-                            setProject(newProject)
-                        }
-                    }
-                />
-                
-                
-                <Heading 
-                    heading={project.headings[1]}
-                    onChangeHeading={(newText) => {
-                            const newProject = {...project}
-                            newProject.headings[1].headingText = newText
-                            setProject(newProject)    
-                        }  
-                    }
-                    onChangeNotes={(noteIndex, newText) => {
-                                const newProject = {...project}
-                                newProject.headings[1].notes[noteIndex] = newText
-                                setProject(newProject)
-                            }
-                        }
-                    onAddNote={() => {
-                            const newProject = {...project}
-                            newProject.headings[1].notes = [...newProject.headings[1].notes, '']
-                            setProject(newProject)
-                        }
-                    }
                     />
-                <Heading 
-                    heading={project.headings[2]}
-                    onChangeHeading={(newText) => {
-                            const newProject = {...project}
-                            newProject.headings[2].headingText = newText
-                            setProject(newProject)    
-                        }
-                    }
-                    onChangeNotes={(noteIndex, newText) => {
-                                const newProject = {...project}
-                                newProject.headings[2].notes[noteIndex] = newText
-                                setProject(newProject)
-                            }
-                        }
-                    onAddNote={() => {
-                            const newProject = {...project}
-                            newProject.headings[2].notes = [...newProject.headings[2].notes, '']
-                            setProject(newProject)
-                        }
-                    }
-                />
+                ))}  
                 
-                       
+
+                
+                
+                <button
+                    className="mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm  "
+                    onClick={() => {
+                        
+                        setProject({...project, 
+                            headings: [...project.headings, {headingText: '', notes: ['']}]
+                        })
+                    }}
+                >
+                + Add
+                </button>
             </div>
+            
             
                     <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
                     {JSON.stringify({ project }, null, 2)}
