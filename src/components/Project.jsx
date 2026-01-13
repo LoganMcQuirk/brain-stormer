@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Heading from './Heading.jsx'
 
 const DEFAULT_PROJECT = {
@@ -16,7 +16,15 @@ const DEFAULT_PROJECT = {
 
 function Project() {
 
-    const [project, setProject] = useState(DEFAULT_PROJECT)
+    const [project, setProject] = useState(() => {
+        const saved = localStorage.getItem('brainstorm-project')
+        return saved ? JSON.parse(saved) : DEFAULT_PROJECT
+    })
+
+    
+    useEffect(() => {
+        localStorage.setItem('brainstorm-project', JSON.stringify(project))
+    }, [project])
 
 
     return (
@@ -25,15 +33,17 @@ function Project() {
             <button
                 className="mb-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
                 onClick={() => {
-                
-                const resetProject = {
-                    title: '',
-                    headings: DEFAULT_PROJECT.headings.map(h => ({
-                    headingText: '',
-                    notes: Array(h.notes.length).fill('')
-                    }))
-                }
-                setProject(resetProject)
+
+                        localStorage.removeItem('brainstorm-project')
+        
+                    const resetProject = {
+                        title: '',
+                        headings: DEFAULT_PROJECT.headings.map(h => ({
+                        headingText: '',
+                        notes: Array(h.notes.length).fill('')
+                        }))
+                    }
+                    setProject(resetProject)
                 }}
             >
             Clear Project
@@ -126,9 +136,9 @@ function Project() {
             </div>
             
             
-                    {/* <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
+                    <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
                     {JSON.stringify({ project }, null, 2)}
-                    </pre> */}
+                    </pre>
         </div>
         
         
