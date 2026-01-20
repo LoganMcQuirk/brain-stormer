@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  /* Default note color - RGB values without 'rgb()' wrapper */
+  --color-note: 242 245 244;
+}
