@@ -1,12 +1,12 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import Notes from './Notes.jsx'
 
-const Heading = forwardRef(function Heading({ heading, onChangeHeading, onDeleteHeading, onChangeNotes, onAddNote, onDeleteNote }, ref) {
+const Heading = forwardRef(function Heading({ heading, onChangeHeading, onDeleteHeading, onChangeNotes, onAddNote, onDeleteNote}, ref) {
 
     const noteRefs = useRef([]);
 
     return (
-        <div className='relative flex flex-col justify-center items-center '>
+        <div className='relative flex flex-col justify-center items-center p-3 rounded-lg bg-black/15 shadow-sm hover:shadow-md transition-shadow'>
             <button
                 onClick={onDeleteHeading}
                 className="text-red-600 text-xs mb-2"
@@ -17,6 +17,7 @@ const Heading = forwardRef(function Heading({ heading, onChangeHeading, onDelete
         <input 
             className="flex items-center justify-center p-4 border rounded w-40 text-center font-medium" 
             placeholder='Heading'
+            maxLength={22}
             ref={ref}
             value={heading.headingText}
             onChange={(e) => onChangeHeading(e.target.value)}
@@ -24,13 +25,14 @@ const Heading = forwardRef(function Heading({ heading, onChangeHeading, onDelete
         />
         
         {heading.notes.map((noteText, i) => (
-            <div key={i} className='flex items-center gap-2 '>
+            <div key={i} className='flex items-center gap-1 '>
             <Notes
                 ref={(el) => noteRefs.current[i] = el}
                 value={noteText}
                 onChange={(e) => onChangeNotes(i, e.target.value)}
                 onDelete={onDeleteNote}
                 noteIndex={i}
+                
             
             />
             

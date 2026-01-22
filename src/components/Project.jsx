@@ -38,10 +38,9 @@ function Project() {
         localStorage.setItem('brainstorm-project', JSON.stringify(project))
     }, [project])
 
-
     return (
         
-        <div className='flex flex-col items-center w-full p-4'>
+        <div className='flex flex-col items-center w-full p-4 overflow-hidden'>
             <button
                 className="mb-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-400 ease-in-out"
                 onClick={() => {
@@ -80,7 +79,7 @@ function Project() {
             </div>
             
 
-            <div className="flex flex-row justify-center items-start gap-4 w-full">
+            <div className="flex flex-row justify-center items-start gap-2 w-full">
 
                 <button
                     className="mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm transition duration-400 ease-in-out  "
@@ -96,6 +95,11 @@ function Project() {
                 >
                 + Add
                 </button>
+                    {project.headings.length === 0 && (
+                    <div className="text-gray-400 italic mt-6">
+                        No headings yet — click “+ Add” to start brainstorming.
+                    </div>
+                    )}
 
                 {project.headings.map((heading, headingIndex) => (
                     <Heading
@@ -114,22 +118,21 @@ function Project() {
                                     notes: hd.notes.map((nt, ntIdx) => {
                                         return ntIdx === noteIndex ? newText : nt
                                     })} 
+                                    
                             ))
                         }}
-                        onAddNote={() => {
-                            setProject({...project,
-                                headings: project.headings.map((hd, i) => {
-                                    return i === headingIndex ? {...hd, notes: [...hd.notes, '']} : hd
-                                })
-                            })
+                        onAddNote={() => {  
+                            updateHeading(headingIndex, (hd) => (
+                                {...hd,
+                                     notes: [...hd.notes, '']}
+                                    
+                            ))
                         }}
                         onDeleteNote={(noteIndex) => {
-                                setProject({...project,
-                                    headings: project.headings.map((hd, i) => {
-                                        return i === headingIndex ? 
-                                        {...hd, notes: hd.notes.filter((_, idx) => idx !== noteIndex)} : hd
-                                    })
-                                })
+                                updateHeading(headingIndex, (hd) => (
+                                        {...hd,
+                                             notes: hd.notes.filter((_, idx) => idx !== noteIndex)}
+                                ))
                             }
                         }
                         onDeleteHeading={() => {
@@ -137,6 +140,7 @@ function Project() {
                                 headings: project.headings.filter((_, idx) => idx !== headingIndex)
                             })
                         }}
+                        
                     
                     />
                 ))}  

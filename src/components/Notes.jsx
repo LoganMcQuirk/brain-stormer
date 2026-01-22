@@ -1,22 +1,39 @@
 import React, { forwardRef, useState } from 'react'
+import ColorPicker from './ColorPicker'
 
-const Notes = forwardRef(function Notes({value, onChange, onDelete, noteIndex}, ref) {
+const Notes = forwardRef(function Notes({value, onChange, onDelete, noteIndex, }, ref) {
 
     return (
-        <div>
-            <div className='absolute flex flex-row items-end justify-end w-40 t-1 mt-2'>
+        <div className='relative size-40 group overflow-y-hidden mt-3 flex items-center flex-col justify-end'>
+            
+            <div className='flex flex-row items-center justify-between w-40 max-h-5 -mb-8 bg-black/15 border rounded 
+                           -translate-y-8
+                           group-hover:-translate-y-3
+                           transition-translate
+                           duration-150 
+                            '
+            >
+                <ColorPicker />
+                <div className='h-full w-auto m-0 text-white text-xs cursor-grab flex-grow text-center'
+                
+                > _-_</div>
                 <button
                 onClick={() => onDelete(noteIndex)}
-                className="flex items-end justify-end text-note-color text-sm font-black border border-grey bg-slate-600 text-shadow-lg border rounded h-auto m-0 pl-1 pr-1"
+                className="flex items-end justify-end text-note-color text-xs font-black border border-grey bg-slate-600 text-shadow-lg border rounded h-full m-0 pl-1 pr-1"
                 
             >
                 ✕
             </button>
+            
             </div>
+            
         <textarea  
+            rows={4} 
             ref={ref}
-            className="resize-none flex self-end items-center justify-center p-4 border rounded size-40 mt-2 mb-2 bg-note-color "
+            maxLength={200}
+            className="resize-none flex self-end items-end justify-center p-4 border rounded size-40 bg-note-color overflow-y-auto"
             placeholder="Notes"
+            
             value={value}
             onChange={onChange}
             

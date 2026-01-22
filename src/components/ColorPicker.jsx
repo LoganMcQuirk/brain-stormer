@@ -35,14 +35,11 @@ function ColorPicker() {
 
   return (
     <div>
-      <label>
-        Choose Note Color:
-        <input 
+        <input className='min-h-full w-4 m-0'
           type="color" 
           value={noteColor}
           onChange={handleColorChange}
         />
-      </label>
     </div>
   );
 }
