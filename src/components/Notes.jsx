@@ -6,7 +6,7 @@ const Notes = forwardRef(function Notes({value, onChange, onDelete, noteIndex, }
     return (
         <div className='relative size-40 group overflow-y-hidden mt-3 flex items-center flex-col justify-end'>
             
-            <div className='flex flex-row items-center justify-between w-40 max-h-5 -mb-8 bg-black/15 border rounded 
+            <div className='flex flex-row items-center justify-between w-40 max-h-5 -mb-8 bg-note-color border rounded 
                            -translate-y-8
                            group-hover:-translate-y-3
                            transition-translate
@@ -14,7 +14,7 @@ const Notes = forwardRef(function Notes({value, onChange, onDelete, noteIndex, }
                             '
             >
                 <ColorPicker />
-                <div className='h-full w-auto m-0 text-white text-xs cursor-grab flex-grow text-center'
+                <div className='h-full w-auto m-0 text-white text-xs cursor-grab flex-grow text-center bg-black/20'
                 
                 > _-_</div>
                 <button

@@ -1,12 +1,33 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import Notes from './Notes.jsx'
 
-const Heading = forwardRef(function Heading({ heading, onChangeHeading, onDeleteHeading, onChangeNotes, onAddNote, onDeleteNote}, ref) {
+import { useSortable } from '@dnd-kit/sortable'
+import { CSS } from '@dnd-kit/utilities'
+
+const Heading = forwardRef(function Heading({ 
+    heading, onChangeHeading, onDeleteHeading, onChangeNotes, onAddNote, onDeleteNote, onDragStart, onDragOver, onDrop, isDragging}, ref) {
 
     const noteRefs = useRef([]);
 
     return (
-        <div className='relative flex flex-col justify-center items-center p-3 rounded-lg bg-black/15 shadow-sm hover:shadow-md transition-shadow'>
+        <div 
+            className={`relative flex flex-col justify-center items-center p-4 rounded-lg bg-black/15 shadow-sm hover:shadow-md transition-all duration-200 ${
+            isDragging ? 'opacity-50 scale-95' : 'opacity-100 scale-100'
+            }`}
+            
+            onDragOver={onDragOver}
+            onDrop={onDrop}
+            
+            
+            >
+
+                <div
+                className='h-full w-auto m-0 text-white text-xs cursor-grab flex-grow text-center'
+                draggable
+                onDragStart={onDragStart}
+                >
+                _-_
+                </div>
             <button
                 onClick={onDeleteHeading}
                 className="text-red-600 text-xs mb-2"

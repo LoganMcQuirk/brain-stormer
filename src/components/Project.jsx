@@ -2,20 +2,23 @@ import React, { useState, useEffect, useRef } from 'react'
 import Heading from './Heading.jsx'
 import ColorPicker from './ColorPicker.jsx'
 
+import { DndContext } from '@dnd-kit/core'
+import { SortableContext, arrayMove } from '@dnd-kit/sortable'
+import { verticalListSortingStrategy } from '@dnd-kit/sortable'
+
 const DEFAULT_PROJECT = {
         title: '',
         headings: [
-            {headingText:'', 
-                notes:['']},
-            {headingText:'', 
-                notes:['']},
-            {headingText:'', 
-                notes:['']}
+            { id: crypto.randomUUID(), headingText: '', notes: [''] },
+            { id: crypto.randomUUID(), headingText: '', notes: [''] },
+            { id: crypto.randomUUID(), headingText: '', notes: [''] }
         ]
 
     }
 
 function Project() {
+
+    const [draggedHeadingIndex, setDraggedHeadingIndex] = useState(null);
 
     const headingRefs = useRef([])
 
@@ -37,6 +40,16 @@ function Project() {
     useEffect(() => {
         localStorage.setItem('brainstorm-project', JSON.stringify(project))
     }, [project])
+
+    const reorderHeadings = (fromIndex, toIndex) => {
+    if (fromIndex === toIndex) return;
+
+    const updated = [...project.headings];
+    const [moved] = updated.splice(fromIndex, 1);
+    updated.splice(toIndex, 0, moved);
+
+    setProject({ ...project, headings: updated });
+    };
 
     return (
         
@@ -79,14 +92,14 @@ function Project() {
             </div>
             
 
-            <div className="flex flex-row justify-center items-start gap-2 w-full">
+            <div className="flex flex-row justify-center items-start gap-1 w-full">
 
                 <button
                     className="mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm transition duration-400 ease-in-out  "
                     onClick={() => {
                         
                         setProject({...project, 
-                            headings: [{headingText: '', notes: ['']}, ...project.headings ]
+                            headings: [{ id: crypto.randomUUID(), headingText: '', notes: [''] }, ...project.headings ]
                         })
                         setTimeout(() => {
                         headingRefs.current[0]?.focus();
@@ -103,9 +116,19 @@ function Project() {
 
                 {project.headings.map((heading, headingIndex) => (
                     <Heading
+                            
                         ref={(el) => headingRefs.current[headingIndex] = el}
                         key={headingIndex}
                         heading={heading}
+
+                        isDragging={draggedHeadingIndex === headingIndex}
+                        onDragStart={() => setDraggedHeadingIndex(headingIndex)}
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={() => {
+                            reorderHeadings(draggedHeadingIndex, headingIndex);
+                            setDraggedHeadingIndex(null);
+                        }}
+
                         onChangeHeading={(newText) => {
                             updateHeading(headingIndex, (hd) => (
                                 {...hd, 
@@ -153,7 +176,7 @@ function Project() {
                     onClick={() => {
                         const newLength = project.headings.length
                         setProject({...project, 
-                            headings: [...project.headings, {headingText: '', notes: ['']}]
+                            headings: [...project.headings, { id: crypto.randomUUID(), headingText: '', notes: [''] }]
                         })
 
                         setTimeout(() => {
@@ -172,6 +195,7 @@ function Project() {
                     {/* <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
                     {JSON.stringify({ project }, null, 2)}
                     </pre> */}
+                    <pre>{JSON.stringify(project.headings.map(h => h.id), null, 2)}</pre>
         </div>
         
         
