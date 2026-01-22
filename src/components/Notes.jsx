@@ -19,7 +19,7 @@ const Notes = forwardRef(function Notes({value, onChange, onDelete, noteIndex, }
                 > _-_</div>
                 <button
                 onClick={() => onDelete(noteIndex)}
-                className="flex items-end justify-end text-note-color text-xs font-black border border-grey bg-slate-600 text-shadow-lg border rounded h-full m-0 pl-1 pr-1"
+                className="flex items-end justify-end text-white/90 text-xs font-black border border-grey bg-red-700/85 text-shadow-lg border rounded h-full m-0 pl-1 pr-1"
                 
             >
                 ✕

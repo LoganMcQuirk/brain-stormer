@@ -195,7 +195,7 @@ function Project() {
                     {/* <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
                     {JSON.stringify({ project }, null, 2)}
                     </pre> */}
-                    <pre>{JSON.stringify(project.headings.map(h => h.id), null, 2)}</pre>
+                    {/* <pre>{JSON.stringify(project.headings.map(h => h.id), null, 2)}</pre> */}
         </div>
         
         
