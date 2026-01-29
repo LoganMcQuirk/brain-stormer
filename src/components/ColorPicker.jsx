@@ -35,11 +35,14 @@ function ColorPicker() {
 
   return (
     <div>
-        <input className='min-h-full w-4 m-0'
+      
+        <input 
           type="color" 
           value={noteColor}
           onChange={handleColorChange}
+          className='w-5 h-5 border border-radius-50'
         />
+      
     </div>
   );
 }

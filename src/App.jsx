@@ -15,7 +15,7 @@ function App() {
       </header>
     {/* Main Content */}
 
-      <main className='h-full flex-grow p-4 '>
+      <main className='h-full flex-grow p-4'>
         
         <Project />
 
