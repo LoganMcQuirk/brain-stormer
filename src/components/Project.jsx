@@ -14,6 +14,7 @@ const DEFAULT_PROJECT = {
 function Project() {
   const headingRefs = useRef([])
 
+  // Helper to update a specific heading
   const updateHeading = (headingIndex, updater) => {
     setProject({
       ...project,
@@ -23,15 +24,18 @@ function Project() {
     })
   }
 
+  // Load project from localStorage or use default
   const [project, setProject] = useState(() => {
     const saved = localStorage.getItem('brainstorm-project')
     return saved ? JSON.parse(saved) : DEFAULT_PROJECT
   })
 
+  // Save project to localStorage on changes
   useEffect(() => {
     localStorage.setItem('brainstorm-project', JSON.stringify(project))
   }, [project])
 
+  // Render
   return (
     <div className='flex flex-col items-center w-full p-4 overflow-hidden'>
       <button
@@ -66,6 +70,8 @@ function Project() {
       </div>
 
       <div className="flex flex-row justify-center items-start gap-2 w-full">
+
+        {/* Left Add heading Button */}
         <button
           className="mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm transition duration-400 ease-in-out"
           onClick={() => {
@@ -80,13 +86,13 @@ function Project() {
         >
           + Add
         </button>
-
+          {/* No headings display */}
         {project.headings.length === 0 && (
           <div className="text-gray-400 italic mt-6">
             No headings yet — click "+ Add" to start brainstorming.
           </div>
         )}
-
+        {/* Headings */}
         {project.headings.map((heading, headingIndex) => (
           <Heading
             ref={(el) => headingRefs.current[headingIndex] = el}
@@ -121,6 +127,7 @@ function Project() {
           />
         ))}
 
+        {/* Right Add heading Button */}
         <button
           className="mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm"
           onClick={() => {

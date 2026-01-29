@@ -6,7 +6,11 @@ const Notes = forwardRef(function Notes(
   ref
 ) {
   return (
+
+      
     <div className='relative size-40 group overflow-y-hidden mt-3 flex items-center flex-col justify-end'>
+
+    {/*Handle Bar*/}
       <div className='flex flex-row items-center justify-between w-40 max-h-5 -mb-8 bg-black/15 border rounded -translate-y-8 group-hover:-translate-y-3 transition-translate duration-150'>
         <ColorPicker />
         <div className='h-full w-auto m-0 text-white text-xs cursor-grab flex-grow text-center'>
@@ -20,6 +24,8 @@ const Notes = forwardRef(function Notes(
           ✕
         </button>
       </div>
+
+    {/* Note area */}
       <textarea
         rows={4}
         ref={ref}

@@ -16,7 +16,7 @@ function ColorPicker() {
       `${rgb.r} ${rgb.g} ${rgb.b}`
     );
     
-    // Optional: Save to localStorage
+    // Save to localStorage
     localStorage.setItem('noteColor', hexColor);
   };
 
