@@ -1,6 +1,64 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Heading from './Heading.jsx'
 import ColorPicker from './ColorPicker.jsx'
+import { DndContext, closestCenter, 
+  useSensors, 
+  useSensor, PointerSensor
+} from '@dnd-kit/core' ;
+import { 
+  SortableContext,
+  useSortable,
+  horizontalListSortingStrategy,
+  arrayMove
+
+ } from '@dnd-kit/sortable';
+
+//need to add handlers for function for drag and drop of headings to begin with, then can add for notes within headings if time allows.
+
+/**
+ * @typedef {Object} Item
+ * @property {any} id
+ * @property {any} content
+ */
+
+/**
+ * @param {{ id: any, content: any }} props
+ */
+
+function SortableItem({ id, content }) { 
+
+  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+
+  const style = {
+    transform: `translate3d(${transform ? transform.x : 0}px, ${transform ? transform.y : 0}px, 0)`,
+    transition,
+    cursor: 'grab',
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      <div 
+        {...attributes} 
+        {...listeners}
+        className='w-full h-8 bg-gray-400 hover:bg-gray-500 cursor-grab active:cursor-grabbing flex items-center justify-center rounded-t text-white text-xs font-semibold'
+      >
+        ⋮⋮ Drag to reorder
+      </div>
+      <div>
+        {content}
+      </div>
+    </div>
+  );
+
+
+
+}
+
+
+
+
+
+
 
 const DEFAULT_PROJECT = {
   title: '',
@@ -12,9 +70,27 @@ const DEFAULT_PROJECT = {
 }
 
 function Project() {
+
+  // Load project from localStorage or use default
+  const [project, setProject] = useState(() => {
+    const saved = localStorage.getItem('brainstorm-project')
+    return saved ? JSON.parse(saved) : DEFAULT_PROJECT
+  })
+
   const headingRefs = useRef([])
 
-  // Helper to update a specific heading
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 5,
+      },
+    })
+  );
+
+  /**
+   * @param {number} headingIndex
+   * @param {Function} updater
+   */
   const updateHeading = (headingIndex, updater) => {
     setProject({
       ...project,
@@ -24,11 +100,24 @@ function Project() {
     })
   }
 
-  // Load project from localStorage or use default
-  const [project, setProject] = useState(() => {
-    const saved = localStorage.getItem('brainstorm-project')
-    return saved ? JSON.parse(saved) : DEFAULT_PROJECT
-  })
+  /**
+   * @param {Object} event - DragEndEvent
+   * @param {Object} event.active - Active draggable
+   * @param {Object} event.over - Over droppable
+   */
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (over && active.id !== over.id) {
+      const oldIndex = active.id;
+      const newIndex = over.id;
+
+      setProject({
+        ...project,
+        headings: arrayMove(project.headings, oldIndex, newIndex)
+      });
+    }
+  }
 
   // Save project to localStorage on changes
   useEffect(() => {
@@ -93,39 +182,54 @@ function Project() {
           </div>
         )}
         {/* Headings */}
-        {project.headings.map((heading, headingIndex) => (
-          <Heading
-            ref={(el) => headingRefs.current[headingIndex] = el}
-            key={headingIndex}
-            heading={heading}
-            onChangeHeading={(newText) => {
-              updateHeading(headingIndex, (hd) => ({ ...hd, headingText: newText }))
-            }}
-            onChangeNotes={(noteIndex, newText) => {
-              updateHeading(headingIndex, (hd) => ({
-                ...hd,
-                notes: hd.notes.map((nt, ntIdx) => {
-                  return ntIdx === noteIndex ? newText : nt
-                })
-              }))
-            }}
-            onAddNote={() => {
-              updateHeading(headingIndex, (hd) => ({ ...hd, notes: [...hd.notes, ''] }))
-            }}
-            onDeleteNote={(noteIndex) => {
-              updateHeading(headingIndex, (hd) => ({
-                ...hd,
-                notes: hd.notes.filter((_, idx) => idx !== noteIndex)
-              }))
-            }}
-            onDeleteHeading={() => {
-              setProject({
-                ...project,
-                headings: project.headings.filter((_, idx) => idx !== headingIndex)
-              })
-            }}
-          />
-        ))}
+
+        <DndContext 
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext 
+          items={project.headings.map((_, i) => i)} 
+          strategy={horizontalListSortingStrategy}
+        >
+          {project.headings.map((heading, headingIndex) => (
+            <SortableItem 
+              key={headingIndex}
+              id={headingIndex}
+              content={
+                <Heading
+                  ref={(el) => headingRefs.current[headingIndex] = el}
+                  heading={heading}
+                  onChangeHeading={(newText) => {
+                    updateHeading(headingIndex, (hd) => ({ ...hd, headingText: newText }))
+                  }}
+                  onChangeNotes={(noteIndex, newText) => {
+                    updateHeading(headingIndex, (hd) => ({
+                      ...hd,
+                      notes: hd.notes.map((nt, ntIdx) => ntIdx === noteIndex ? newText : nt)
+                    }))
+                  }}
+                  onAddNote={() => {
+                    updateHeading(headingIndex, (hd) => ({ ...hd, notes: [...hd.notes, ''] }))
+                  }}
+                  onDeleteNote={(noteIndex) => {
+                    updateHeading(headingIndex, (hd) => ({
+                      ...hd,
+                      notes: hd.notes.filter((_, idx) => idx !== noteIndex)
+                    }))
+                  }}
+                  onDeleteHeading={() => {
+                    setProject({
+                      ...project,
+                      headings: project.headings.filter((_, idx) => idx !== headingIndex)
+                    })
+                  }}
+                />
+              }
+            />
+          ))}
+        </SortableContext>
+      </DndContext>
 
         {/* Right Add heading Button */}
         <button
@@ -145,9 +249,9 @@ function Project() {
         </button>
       </div>
 
-      {/* <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
+      <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
         {JSON.stringify({ project }, null, 2)}
-      </pre> */}
+      </pre>
     </div>
   )
 }
