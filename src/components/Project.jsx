@@ -30,7 +30,7 @@ function SortableItem({ id, content }) {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
   const style = {
-    transform: `translate3d(${transform ? transform.x : 0}px, ${transform ? transform.y : 0}px, 0)`,
+    transform: transform ? `translate3d(${transform ? transform.x : 0}px, ${transform ? transform.y : 0}px, 0)` : undefined,
     transition,
     cursor: 'grab',
   };
@@ -63,11 +63,16 @@ function SortableItem({ id, content }) {
 const DEFAULT_PROJECT = {
   title: '',
   headings: [
-    { headingText: '', notes: [''] },
-    { headingText: '', notes: [''] },
-    { headingText: '', notes: [''] }
+    { id: crypto.randomUUID(), headingText: '', notes: [''] }
   ]
 }
+
+// Use crypto.randomUUID() or a simple counter
+const createHeading = () => ({
+  id: crypto.randomUUID(),
+  headingText: '',
+  notes: ['']
+})
 
 function Project() {
 
@@ -105,12 +110,17 @@ function Project() {
    * @param {Object} event.active - Active draggable
    * @param {Object} event.over - Over droppable
    */
+
+
+  // Handle drag end to reorder headings
   const handleDragEnd = (event) => {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      const oldIndex = active.id;
-      const newIndex = over.id;
+      // const oldIndex = active.id;
+      // const newIndex = over.id;
+      const oldIndex = project.headings.findIndex(h => h.id === active.id)
+      const newIndex = project.headings.findIndex(h => h.id === over.id)
 
       setProject({
         ...project,
@@ -134,6 +144,7 @@ function Project() {
           const resetProject = {
             title: '',
             headings: DEFAULT_PROJECT.headings.map(h => ({
+              id: h.id,
               headingText: '',
               notes: Array(h.notes.length).fill('')
             }))
@@ -166,7 +177,7 @@ function Project() {
           onClick={() => {
             setProject({
               ...project,
-              headings: [{ headingText: '', notes: [''] }, ...project.headings]
+              headings: [createHeading(), ...project.headings]
             })
             setTimeout(() => {
               headingRefs.current[0]?.focus()
@@ -189,13 +200,17 @@ function Project() {
         onDragEnd={handleDragEnd}
       >
         <SortableContext 
-          items={project.headings.map((_, i) => i)} 
+          // items={project.headings.map((_, i) => i)} 
+
+          items={project.headings.map(h => h.id)}
           strategy={horizontalListSortingStrategy}
         >
           {project.headings.map((heading, headingIndex) => (
             <SortableItem 
-              key={headingIndex}
-              id={headingIndex}
+              // key={headingIndex}
+              // id={headingIndex}
+              key={heading.id}
+              id={heading.id}
               content={
                 <Heading
                   ref={(el) => headingRefs.current[headingIndex] = el}
@@ -238,7 +253,7 @@ function Project() {
             const newLength = project.headings.length
             setProject({
               ...project,
-              headings: [...project.headings, { headingText: '', notes: [''] }]
+              headings: [...project.headings, createHeading()]
             })
             setTimeout(() => {
               headingRefs.current[newLength]?.focus()
@@ -249,9 +264,9 @@ function Project() {
         </button>
       </div>
 
-      <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
+      {/* <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">
         {JSON.stringify({ project }, null, 2)}
-      </pre>
+      </pre> */}
     </div>
   )
 }
