@@ -15,15 +15,10 @@ import {
 
 //need to add handlers for function for drag and drop of headings to begin with, then can add for notes within headings if time allows.
 
-/**
- * @typedef {Object} Item
- * @property {any} id
- * @property {any} content
- */
 
-/**
- * @param {{ id: any, content: any }} props
- */
+
+
+// Sortable item component for headings
 
 function SortableItem({ id, content }) { 
 
@@ -40,9 +35,9 @@ function SortableItem({ id, content }) {
       <div 
         {...attributes} 
         {...listeners}
-        className='w-full h-8 bg-gray-400 hover:bg-gray-500 cursor-grab active:cursor-grabbing flex items-center justify-center rounded-t text-white text-xs font-semibold'
+        className='text-lg font-bold w-full h-8 bg-gray-400 hover:bg-gray-500 cursor-grab active:cursor-grabbing flex items-center justify-center rounded-t text-white text-xs font-semibold'
       >
-        ⋮⋮ Drag to reorder
+        ⋮⋮⋮
       </div>
       <div>
         {content}
@@ -54,11 +49,7 @@ function SortableItem({ id, content }) {
 
 }
 
-
-
-
-
-
+// Default project structure for new projects or when clearing existing project.
 
 const DEFAULT_PROJECT = {
   title: '',
@@ -67,12 +58,17 @@ const DEFAULT_PROJECT = {
   ]
 }
 
-// Use crypto.randomUUID() or a simple counter
+// Use crypto.randomUUID() to generate new headings new Unique ID's. Stablises Dnd-kit keys
 const createHeading = () => ({
   id: crypto.randomUUID(),
   headingText: '',
   notes: ['']
 })
+
+
+// Full project component that manages the overall state of the brainstorming project
+// Includes title, headings, and notes. Handles adding, updating, deleting, and reordering of headings and notes. 
+// Persists project state to localStorage for data persistence across sessions.
 
 function Project() {
 
@@ -92,10 +88,7 @@ function Project() {
     })
   );
 
-  /**
-   * @param {number} headingIndex
-   * @param {Function} updater
-   */
+  
   const updateHeading = (headingIndex, updater) => {
     setProject({
       ...project,
@@ -105,11 +98,7 @@ function Project() {
     })
   }
 
-  /**
-   * @param {Object} event - DragEndEvent
-   * @param {Object} event.active - Active draggable
-   * @param {Object} event.over - Over droppable
-   */
+  
 
 
   // Handle drag end to reorder headings
@@ -117,8 +106,6 @@ function Project() {
     const { active, over } = event;
 
     if (over && active.id !== over.id) {
-      // const oldIndex = active.id;
-      // const newIndex = over.id;
       const oldIndex = project.headings.findIndex(h => h.id === active.id)
       const newIndex = project.headings.findIndex(h => h.id === over.id)
 
@@ -200,15 +187,12 @@ function Project() {
         onDragEnd={handleDragEnd}
       >
         <SortableContext 
-          // items={project.headings.map((_, i) => i)} 
-
           items={project.headings.map(h => h.id)}
           strategy={horizontalListSortingStrategy}
         >
           {project.headings.map((heading, headingIndex) => (
             <SortableItem 
-              // key={headingIndex}
-              // id={headingIndex}
+              
               key={heading.id}
               id={heading.id}
               content={
