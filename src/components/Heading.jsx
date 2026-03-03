@@ -1,8 +1,6 @@
 import React, { useState, useRef, forwardRef } from 'react'
 import Notes from './Notes.jsx'
 
- 
-
 const Heading = forwardRef(function Heading(
   {
     heading,
