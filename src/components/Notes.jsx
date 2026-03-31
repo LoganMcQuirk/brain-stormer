@@ -2,7 +2,7 @@ import React, { forwardRef, useState } from 'react'
 import ColorPicker from './ColorPicker'
 
 const Notes = forwardRef(function Notes(
-  { value, onChange, onDelete, noteIndex },
+  { value, onChange, onDelete, noteIndex, dragAttributes, dragListeners },
   ref
 ) {
   return (
@@ -11,10 +11,13 @@ const Notes = forwardRef(function Notes(
     <div className='relative size-40 group overflow-y-hidden mt-3 flex items-center flex-col justify-end'>
       
     {/*Handle Bar*/}
-      <div className='flex flex-row items-center justify-between w-40 max-h-5 -mb-8 bg-black/15 border rounded -translate-y-8 group-hover:-translate-y-3 transition-translate duration-150'>
+      <div className='flex flex-row items-center justify-between w-40 max-h-5 -mb-8 bg-black/15 border rounded -translate-y-8 group-hover:-translate-y-3 transition-translate duration-150'
+        {...dragAttributes}
+        {...dragListeners}
+      >
         <ColorPicker />
         <div className='h-full w-auto m-0 text-white text-xs cursor-grab flex-grow text-center'>
-          _-_
+          :::
         </div>
         <button
           onClick={() => onDelete(noteIndex)}

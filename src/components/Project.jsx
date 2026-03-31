@@ -16,18 +16,34 @@ import {
 //need to add handlers for function for drag and drop of headings to begin with, then can add for notes within headings if time allows.
 
 
+function SortableNote({ id, children }) { 
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
+  const style = {
+    transform: transform ? `translate3d(${transform ? transform.x : 0}px, ${transform ? transform.y : 0}px, 0)` : undefined,
+    transition,
+    zIndex: isDragging ? 1000 : 0,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      
+       {React.cloneElement(children, { dragAttributes: attributes, dragListeners: listeners })}
+    </div>
+  );
+}
 
 // Sortable item component for headings
 
 function SortableItem({ id, content }) { 
 
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
 
   const style = {
     transform: transform ? `translate3d(${transform ? transform.x : 0}px, ${transform ? transform.y : 0}px, 0)` : undefined,
     transition,
     cursor: 'grab',
+    zIndex: isDragging ? 1000 : 0,
   };
 
   return (
@@ -37,7 +53,7 @@ function SortableItem({ id, content }) {
         {...listeners}
         className='text-lg font-bold w-full h-8 bg-gray-400 hover:bg-gray-500 cursor-grab active:cursor-grabbing flex items-center justify-center rounded-t text-white text-xs font-semibold'
       >
-        ⋮⋮⋮
+        :::
       </div>
       <div>
         {content}
@@ -54,7 +70,7 @@ function SortableItem({ id, content }) {
 const DEFAULT_PROJECT = {
   title: '',
   headings: [
-    { id: crypto.randomUUID(), headingText: '', notes: [''] }
+    { id: crypto.randomUUID(), headingText: '', notes: [{ id: crypto.randomUUID(), text: '' }] }
   ]
 }
 
@@ -62,7 +78,7 @@ const DEFAULT_PROJECT = {
 const createHeading = () => ({
   id: crypto.randomUUID(),
   headingText: '',
-  notes: ['']
+  notes: [{ id: crypto.randomUUID(), text: '' }]
 })
 
 
@@ -101,6 +117,21 @@ function Project() {
   
 
 
+  // // Handle drag end to reorder headings
+  // const handleDragEnd = (event) => {
+  //   const { active, over } = event;
+
+  //   if (over && active.id !== over.id) {
+  //     const oldIndex = project.headings.findIndex(h => h.id === active.id)
+  //     const newIndex = project.headings.findIndex(h => h.id === over.id)
+
+  //     setProject({
+  //       ...project,
+  //       headings: arrayMove(project.headings, oldIndex, newIndex)
+  //     });
+  //   }
+  // }
+
   // Handle drag end to reorder headings
   const handleDragEnd = (event) => {
     const { active, over } = event;
@@ -109,10 +140,12 @@ function Project() {
       const oldIndex = project.headings.findIndex(h => h.id === active.id)
       const newIndex = project.headings.findIndex(h => h.id === over.id)
 
-      setProject({
-        ...project,
-        headings: arrayMove(project.headings, oldIndex, newIndex)
-      });
+      if (oldIndex !== -1 && newIndex !== -1) {
+        setProject({
+          ...project,
+          headings: arrayMove(project.headings, oldIndex, newIndex)
+        });
+      }
     }
   }
 
@@ -133,7 +166,7 @@ function Project() {
             headings: DEFAULT_PROJECT.headings.map(h => ({
               id: h.id,
               headingText: '',
-              notes: Array(h.notes.length).fill('')
+              notes: Array(h.notes.length).fill({id: crypto.randomUUID(), text: ''})
             }))
           }
           setProject(resetProject)
@@ -192,7 +225,6 @@ function Project() {
         >
           {project.headings.map((heading, headingIndex) => (
             <SortableItem 
-              
               key={heading.id}
               id={heading.id}
               content={
@@ -202,19 +234,25 @@ function Project() {
                   onChangeHeading={(newText) => {
                     updateHeading(headingIndex, (hd) => ({ ...hd, headingText: newText }))
                   }}
-                  onChangeNotes={(noteIndex, newText) => {
+                  onChangeNotes={(noteId, newText) => {
                     updateHeading(headingIndex, (hd) => ({
                       ...hd,
-                      notes: hd.notes.map((nt, ntIdx) => ntIdx === noteIndex ? newText : nt)
+                      notes: hd.notes.map((nt) => nt.id === noteId ? { ...nt, text: newText } : nt)
                     }))
                   }}
                   onAddNote={() => {
-                    updateHeading(headingIndex, (hd) => ({ ...hd, notes: [...hd.notes, ''] }))
+                    updateHeading(headingIndex, (hd) => ({ ...hd, notes: [...hd.notes, { id: crypto.randomUUID(), text: '' }] }))
                   }}
-                  onDeleteNote={(noteIndex) => {
+                  onDeleteNote={(noteId) => {
                     updateHeading(headingIndex, (hd) => ({
                       ...hd,
-                      notes: hd.notes.filter((_, idx) => idx !== noteIndex)
+                      notes: hd.notes.filter((nt) => nt.id !== noteId)
+                    }))
+                  }}
+                  onReorderNotes={(reorderedNotes) => {
+                    updateHeading(headingIndex, (hd) => ({
+                      ...hd,
+                      notes: reorderedNotes
                     }))
                   }}
                   onDeleteHeading={() => {
@@ -254,5 +292,5 @@ function Project() {
     </div>
   )
 }
-
+export { SortableNote }
 export default Project
