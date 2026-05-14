@@ -51,10 +51,18 @@ function SortableItem({ id, content }) {
       <div 
         {...attributes} 
         {...listeners}
-        className='text-lg font-bold w-full h-8 bg-gray-400 hover:bg-gray-500 cursor-grab active:cursor-grabbing flex items-center justify-center rounded-t text-white text-xs font-semibold'
+        className='group text-[14px] font-bold w-full h-6 p-0 bg-black/40 hover:bg-black/55 transition-colors cursor-grab active:cursor-grabbing flex items-center justify-between text-white text-xs font-semibold'
       >
+        <div className="flex  items-center justify-center h-6 w-6 m-0 p-0"> </div>
         :::
+          <div className="flex flex-col justify-center items-center h-full w-6 m-0 p-0 group-hover:opacity-100 opacity-0 transition-opacity">
+            <button onClick={content.props.onDeleteHeading} className="flex items-center justify-center text-white/90 text-xs font-black bg-red-700/85 text-shadow-lg 
+            border-none h-6 w-6 m-0 p-0 bg-gray-400/0 hover:bg-red-700/85 transition-colors transition-opacity">
+              ✕
+            </button>
+        </div>
       </div>
+      
       <div>
         {content}
       </div>
@@ -70,7 +78,7 @@ function SortableItem({ id, content }) {
 const DEFAULT_PROJECT = {
   title: '',
   headings: [
-    { id: crypto.randomUUID(), headingText: '', notes: [{ id: crypto.randomUUID(), text: '' }] }
+    { id: crypto.randomUUID(), headingText: '', notes: [{ id: crypto.randomUUID(), text: '', color: '#fbbf24' }] }
   ]
 }
 
@@ -78,7 +86,7 @@ const DEFAULT_PROJECT = {
 const createHeading = () => ({
   id: crypto.randomUUID(),
   headingText: '',
-  notes: [{ id: crypto.randomUUID(), text: '' }]
+  notes: [{ id: crypto.randomUUID(), text: '', color: '#fbbf24' }]
 })
 
 
@@ -156,7 +164,7 @@ function Project() {
 
   // Render
   return (
-    <div className='flex flex-col items-center w-full p-4 overflow-hidden'>
+    <div className='flex flex-col items-center w-full p-4 overflow-auto'>
       <button
         className="mb-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-400 ease-in-out"
         onClick={() => {
@@ -179,14 +187,14 @@ function Project() {
       <ColorPicker />
 
       <div className="project-title w-full mb-4 flex justify-center text-center">
-        <input
-          className="border rounded p-2 w-fit max-w-fit text-center text-xl font-semibold"
+        <span contenteditable="true"
+          className="border rounded p-2 min-w-[200px] text-center text-xl font-semibold bg-gray-200 focus:outline-none focus:ring-2 focus:ring-cyan-500"
           placeholder="Title"
           value={project.title}
           onChange={(e) => {
             setProject({ ...project, title: e.target.value })
           }}
-        />
+        ></span>
       </div>
 
       <div className="flex flex-row justify-center items-start gap-2 w-full">
@@ -206,6 +214,7 @@ function Project() {
         >
           + Add
         </button>
+        {/* style={{ display: project.headings.length === 9 ? 'none' : 'block' }} */}
           {/* No headings display */}
         {project.headings.length === 0 && (
           <div className="text-gray-400 italic mt-6">
@@ -271,6 +280,7 @@ function Project() {
         {/* Right Add heading Button */}
         <button
           className="mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm"
+          
           onClick={() => {
             const newLength = project.headings.length
             setProject({
@@ -284,6 +294,7 @@ function Project() {
         >
           + Add
         </button>
+        {/*style={{ display: project.headings.length === 9 ? 'none' : 'block' }}*/}
       </div>
 
       {/* <pre className="mt-6 text-xs bg-gray-100 p-4 rounded">

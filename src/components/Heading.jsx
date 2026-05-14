@@ -40,12 +40,10 @@ const Heading = forwardRef(function Heading(
   }
 
   return (
-    <div className='relative flex flex-col justify-center items-center p-3 rounded-lg bg-black/15 shadow-sm hover:shadow-md transition-shadow'>
-      <button onClick={onDeleteHeading} className='text-red-600 text-xs mb-2'>
-        Delete Heading
-      </button>
+    <div className='relative flex flex-col justify-center items-center  p-3 bg-black/20 shadow-sm hover:shadow-md transition-shadow'>
+      
       <input
-        className='flex items-center justify-center p-4 border rounded w-40 text-center font-medium'
+        className='flex items-center justify-center p-4 mb-[1px] border rounded w-40 text-center font-medium flex-wrap'
         placeholder='Heading'
         maxLength={22}
         ref={ref}
