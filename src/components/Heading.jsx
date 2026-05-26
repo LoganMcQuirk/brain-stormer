@@ -42,14 +42,16 @@ const Heading = forwardRef(function Heading(
   return (
     <div className='relative flex flex-col justify-center items-center  p-3 bg-black/20 shadow-sm hover:shadow-md transition-shadow'>
       
-      <input
-        className='flex items-center justify-center p-4 mb-[1px] border rounded w-40 text-center font-medium flex-wrap'
+      <span 
+        contentEditable='true'
+        className='resize-xflex items-center min-h-[58px] justify-center p-4 mb-[1px] border rounded w-40 text-center font-medium flex-wrap
+        bg-gray-200 cursor-default focus:cursor-text focus:outline-none focus:ring-2 focus:ring-cyan-500 whitespace'
         placeholder='Heading'
-        maxLength={22}
+        maxLength={80}
         ref={ref}
         value={heading.headingText}
         onChange={(e) => onChangeHeading(e.target.value)}
-      />
+      ></span>
         
       <DndContext 
         sensors={sensors}
