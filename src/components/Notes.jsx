@@ -34,8 +34,8 @@ const Notes = forwardRef(function Notes(
         rows={4}
         ref={ref}
         maxLength={200}
-        className='resize-y flex self-end items-start justify-start p-3 border border-gray-300/0 rounded min-w-40 min-h-40 bg-note-color cursor-default
-         focus:outline-none focus:ring-1 focus:ring-cyan-400 z-20 focus:cursor-text group-hover:rounded-t-[0px] transition-all duration-200 whitespace pre-wrap break-words'
+        className='resize-xflex items-center min-h-40 justify-center p-4 mb-[1px] border rounded w-40 flex-wrap
+        bg-note-color cursor-default focus:cursor-text focus:outline-none focus:ring-2 focus:ring-cyan-500 whitespace z-20'
         placeholder='Notes'
         value={value}
         onChange={onChange}
