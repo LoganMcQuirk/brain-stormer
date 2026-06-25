@@ -42,7 +42,7 @@ const Notes = forwardRef(function Notes(
         <button
           onClick={() => onDelete(noteIndex)}
           
-          className=" z-30 flex flex-col items-center justify-center text-white/90 text-xs border-none font-black bg-gray-400/0 hover:bg-red-700/85 text-shadow-lg h-full w-5 m-0 p-0"
+          className=" z-30 flex flex-col items-center justify-center text-white/90 text-xs border-none font-black bg-gray-400/0 hover:bg-rose-700/85 text-shadow-lg h-full w-5 m-0 p-0"
         >
           ✕
         </button>

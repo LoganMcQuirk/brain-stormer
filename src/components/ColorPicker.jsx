@@ -48,7 +48,7 @@ function ColorPicker({ color, onColorChange }) {
         type="color"
         value={isControlled ? color : localColor}
         onChange={handleColorChange}
-        className='w-5 h-5 border border-radius-50'
+        className='w-5 h-5 border border-white/20  cursor-pointer bg-transparent'
       />
     </div>
   );

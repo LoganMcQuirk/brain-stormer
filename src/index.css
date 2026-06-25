@@ -1,8 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,100..900;1,100..900&family=Elms+Sans:ital,wght@0,100..900;1,100..900&family=Share+Tech+Mono&family=Zalando+Sans+Expanded:ital,wght@0,200..900;1,200..900&display=swap');
 
 :root {
-  /* Default note color - RGB values without 'rgb()' wrapper */
-  --color-note: 242 245 244;
+  color-scheme: light;
+}
+
+body {
+  background:
+    radial-gradient(circle at top left, #cffafe 0%, transparent 35%),
+    radial-gradient(circle at top right, #dbeafe 0%, transparent 35%),
+    #f8fafc;
+}
+
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }

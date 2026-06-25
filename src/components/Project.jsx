@@ -263,7 +263,14 @@ function Project() {
   return (
     <div className='flex flex-col items-center w-full p-4 overflow-auto'>
       <button
-        className="mb-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition duration-400 ease-in-out"
+        className="mb-4 px-4 py-2
+        bg-gradient-to-r from-rose-500 to-red-500
+        text-white rounded-xl
+        font-medium
+        shadow-md shadow-rose-500/20
+        hover:shadow-lg
+        hover:from-rose-600 hover:to-red-600
+        transition-all duration-300"
         onClick={() => {
           localStorage.removeItem('brainstorm-project')
           setProject({ title: '', headings: [createHeading()] })
@@ -398,7 +405,13 @@ function Project() {
         </DndContext>
 
         <button
-          className="mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm"
+          className='mt-2 px-2 py-1
+          bg-gradient-to-r from-cyan-500 to-sky-500
+          text-white rounded-full text-sm font-medium
+          shadow-md shadow-cyan-500/20
+          hover:shadow-lg hover:shadow-cyan-500/30
+          hover:from-cyan-600 hover:to-sky-600
+          transition-all duration-300'
           onClick={() => {
             const newLength = project.headings.length
             setProject(prev => ({ ...prev, headings: [...prev.headings, createHeading()] }))

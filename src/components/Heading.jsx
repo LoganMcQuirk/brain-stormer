@@ -55,7 +55,13 @@ const Heading = forwardRef(function Heading(
       </SortableContext>
 
       <button
-        className='mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm transition duration-400 ease-in-out'
+        className='mt-2 px-2 py-1
+        bg-gradient-to-r from-cyan-500 to-sky-500
+        text-white rounded-full text-sm font-medium
+        shadow-md shadow-cyan-500/20
+        hover:shadow-lg hover:shadow-cyan-500/30
+        hover:from-cyan-600 hover:to-sky-600
+        transition-all duration-300'
         onClick={() => {
           onAddNote()
           setTimeout(() => {
