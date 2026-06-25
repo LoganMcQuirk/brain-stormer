@@ -272,8 +272,6 @@ function Project() {
         Clear Project
       </button>
 
-      <ColorPicker />
-
       <div className="project-title w-full mb-4 flex justify-center text-center">
         <span
           contentEditable="true"
