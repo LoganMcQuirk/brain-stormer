@@ -1,53 +1,59 @@
 import { useState, useEffect } from 'react';
 
-function ColorPicker() {
-  const [noteColor, setNoteColor] = useState('#fbbf24'); // amber-400 default
+// When used inside a Note, pass `color` and `onColorChange` as props.
+// When used standalone (e.g. the dev tool in Project), it falls back to
+// the old global CSS variable behaviour so nothing else breaks.
+function ColorPicker({ color, onColorChange }) {
+  const isControlled = color !== undefined && onColorChange !== undefined;
+
+  const [localColor, setLocalColor] = useState(() => {
+    if (isControlled) return color;
+    return localStorage.getItem('noteColor') || '#fbbf24';
+  });
 
   const handleColorChange = (e) => {
-    const hexColor = e.target.value;
-    setNoteColor(hexColor);
-    
-    // Convert hex to RGB
-    const rgb = hexToRgb(hexColor);
-    
-    // Update CSS variable
-    document.documentElement.style.setProperty(
-      '--color-note',
-      `${rgb.r} ${rgb.g} ${rgb.b}`
-    );
-    
-    // Save to localStorage
-    localStorage.setItem('noteColor', hexColor);
+    const hex = e.target.value;
+
+    if (isControlled) {
+      onColorChange(hex);
+    } else {
+      // Legacy global mode
+      setLocalColor(hex);
+      const rgb = hexToRgb(hex);
+      document.documentElement.style.setProperty('--color-note', `${rgb.r} ${rgb.g} ${rgb.b}`);
+      localStorage.setItem('noteColor', hex);
+    }
   };
 
-  // Load saved color on mount
+  // Sync local display when controlled value changes externally
   useEffect(() => {
-    const savedColor = localStorage.getItem('noteColor');
-    if (savedColor) {
-      setNoteColor(savedColor);
-      const rgb = hexToRgb(savedColor);
-      document.documentElement.style.setProperty(
-        '--color-note',
-        `${rgb.r} ${rgb.g} ${rgb.b}`
-      );
+    if (isControlled) setLocalColor(color);
+  }, [color, isControlled]);
+
+  // Legacy: load saved colour on mount when uncontrolled
+  useEffect(() => {
+    if (!isControlled) {
+      const saved = localStorage.getItem('noteColor');
+      if (saved) {
+        setLocalColor(saved);
+        const rgb = hexToRgb(saved);
+        document.documentElement.style.setProperty('--color-note', `${rgb.r} ${rgb.g} ${rgb.b}`);
+      }
     }
   }, []);
 
   return (
     <div>
-      
-        <input 
-          type="color" 
-          value={noteColor}
-          onChange={handleColorChange}
-          className='w-5 h-5 border border-radius-50'
-        />
-      
+      <input
+        type="color"
+        value={isControlled ? color : localColor}
+        onChange={handleColorChange}
+        className='w-5 h-5 border border-radius-50'
+      />
     </div>
   );
 }
 
-// Helper function to convert hex to RGB
 function hexToRgb(hex) {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
   return result ? {
@@ -55,6 +61,13 @@ function hexToRgb(hex) {
     g: parseInt(result[2], 16),
     b: parseInt(result[3], 16)
   } : { r: 0, g: 0, b: 0 };
+}
+
+// Returns '#ffffff' or '#000000' depending on how dark the background colour is.
+// Threshold of 382 (half of max 765) works well in practice — tune if needed.
+export function getTextColor(hex) {
+  const { r, g, b } = hexToRgb(hex || '#fbbf24');
+  return (r + g + b) < 382 ? '#ffffff' : '#000000';
 }
 
 export default ColorPicker;

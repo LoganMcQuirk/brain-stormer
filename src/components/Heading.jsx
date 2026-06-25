@@ -1,7 +1,6 @@
-import React, { useState, useRef, forwardRef } from 'react'
+import React, { useRef, forwardRef } from 'react'
 import Notes from './Notes.jsx'
-import { DndContext, closestCenter, useSensors, useSensor, PointerSensor } from '@dnd-kit/core'
-import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable'
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { SortableNote } from './Project.jsx'
 
 const Heading = forwardRef(function Heading(
@@ -10,72 +9,51 @@ const Heading = forwardRef(function Heading(
     onChangeHeading,
     onDeleteHeading,
     onChangeNotes,
+    onChangeNoteColor,
     onAddNote,
     onDeleteNote,
-    onReorderNotes
+    onReorderNotes,
   },
   ref
 ) {
   const noteRefs = useRef([])
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 5,
-      },
-    })
-  );
-
-  const handleNoteDragEnd = (event) => {
-    const { active, over } = event;
-
-    if (over && active.id !== over.id) {
-      const oldIndex = heading.notes.findIndex(n => n.id === active.id)
-      const newIndex = heading.notes.findIndex(n => n.id === over.id)
-
-      if (oldIndex !== -1 && newIndex !== -1) {
-        onReorderNotes(arrayMove(heading.notes, oldIndex, newIndex))
-      }
-    }
-  }
-
   return (
-    <div className='relative flex flex-col justify-center items-center  p-3 bg-black/20 shadow-sm hover:shadow-md transition-shadow'>
-      
-      <span 
+    <div className='relative flex flex-col justify-center items-center p-3 bg-black/20 shadow-sm hover:shadow-md transition-shadow'>
+
+      <span
         contentEditable='true'
-        className='resize-xflex items-center min-h-[58px] justify-center p-4 mb-[1px] border rounded w-40 text-center font-medium flex-wrap
-        bg-gray-200 cursor-default focus:cursor-text focus:outline-none focus:ring-2 focus:ring-cyan-500 whitespace'
+        suppressContentEditableWarning
+        className='flex items-center min-h-[58px] justify-center p-4 mb-[1px] border rounded w-40 text-center font-medium flex-wrap
+          bg-gray-200 cursor-default focus:cursor-text focus:outline-none focus:ring-2 focus:ring-cyan-500'
         placeholder='Heading'
-        maxLength={80}
         ref={ref}
-        value={heading.headingText}
-        onChange={(e) => onChangeHeading(e.target.value)}
+        onInput={(e) => onChangeHeading(e.currentTarget.textContent)}
       ></span>
-        
-      <DndContext 
-        sensors={sensors}
-        collisionDetection={closestCenter}
-        onDragEnd={handleNoteDragEnd}
+
+      {/*
+        SortableContext registers this column's note IDs with the parent DndContext.
+        No nested DndContext here — the parent handles all drag events.
+      */}
+      <SortableContext
+        items={heading.notes.map(n => n.id)}
+        strategy={verticalListSortingStrategy}
       >
-        <SortableContext 
-          items={heading.notes.map(n => n.id)}
-          strategy={verticalListSortingStrategy}
-        >
-          {heading.notes.map((note, i) => (
-            <SortableNote key={note.id} id={note.id}>
-              <Notes
-                ref={(el) => noteRefs.current[i] = el}
-                value={note.text}
-                onChange={(e) => onChangeNotes(note.id, e.target.value)}
-                onDelete={() => onDeleteNote(note.id)}
-                noteIndex={note.id}
-              />
-            </SortableNote>
-          ))}
-        </SortableContext>
-      </DndContext>
-        
+        {heading.notes.map((note, i) => (
+          <SortableNote key={note.id} id={note.id}>
+            <Notes
+              ref={(el) => noteRefs.current[i] = el}
+              value={note.text}
+              color={note.color}
+              onChange={(e) => onChangeNotes(note.id, e.target.value)}
+              onColorChange={(newColor) => onChangeNoteColor(note.id, newColor)}
+              onDelete={() => onDeleteNote(note.id)}
+              noteIndex={note.id}
+            />
+          </SortableNote>
+        ))}
+      </SortableContext>
+
       <button
         className='mt-2 px-2 py-1 bg-cyan-500 text-white rounded-full hover:bg-cyan-600 text-sm transition duration-400 ease-in-out'
         onClick={() => {
@@ -90,4 +68,5 @@ const Heading = forwardRef(function Heading(
     </div>
   )
 })
-export default Heading    
+
+export default Heading

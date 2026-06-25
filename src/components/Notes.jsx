@@ -1,10 +1,29 @@
-import React, { forwardRef, useState } from 'react'
-import ColorPicker from './ColorPicker'
+import React, { forwardRef, useEffect, useRef } from 'react'
+import ColorPicker, { getTextColor } from './ColorPicker'
 
 const Notes = forwardRef(function Notes(
-  { value, onChange, onDelete, noteIndex, dragAttributes, dragListeners },
+  { value, onChange, onDelete, noteIndex, color, onColorChange, dragAttributes, dragListeners },
   ref
 ) {
+  // Internal ref for the contentEditable span
+  const spanRef = useRef(null)
+
+  // Merge external ref with internal ref
+  const setRef = (el) => {
+    spanRef.current = el
+    if (typeof ref === 'function') ref(el)
+    else if (ref) ref.current = el
+  }
+
+  // Set innerHTML only on mount (or when the note ID changes = new note mounted).
+  // We do NOT update innerHTML on every `value` change — that would reset the cursor.
+  // Text stays in sync via onInput writing back to state.
+  useEffect(() => {
+    if (spanRef.current && spanRef.current.textContent !== (value ?? '')) {
+      spanRef.current.textContent = value ?? ''
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [noteIndex]) // noteIndex = note id, so this fires when a new note mounts
   return (
 
       
@@ -16,7 +35,7 @@ const Notes = forwardRef(function Notes(
         {...dragAttributes}
         {...dragListeners}
       >
-        <ColorPicker />
+        <ColorPicker color={color} onColorChange={onColorChange} />
         <div className='h-full w-auto m-0 text-white text-xs cursor-grab flex-grow text-center z-30'>
           :::
         </div>
@@ -31,14 +50,13 @@ const Notes = forwardRef(function Notes(
 
     {/* Note area */}
       <span contentEditable='true'
-        rows={4}
-        ref={ref}
-        maxLength={200}
+        suppressContentEditableWarning
+        ref={setRef}
         className='resize-xflex items-center min-h-40 justify-center p-4 mb-[1px] border rounded w-40 flex-wrap
-        bg-note-color cursor-default focus:cursor-text focus:outline-none focus:ring-2 focus:ring-cyan-500 whitespace z-20'
+        cursor-default focus:cursor-text focus:outline-none focus:ring-2 focus:ring-cyan-500 whitespace z-20'
+        style={{ backgroundColor: color || '#ffffff', color: getTextColor(color) }}
         placeholder='Notes'
-        value={value}
-        onChange={onChange}
+        onInput={(e) => onChange({ target: { value: e.currentTarget.textContent } })}
       ></span>
     </div>
   )
